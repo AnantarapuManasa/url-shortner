@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SwiftURL - Shorten your links instantly</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+
+<link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
+
+</head>
+
+<body>
+
+<!-- Navbar -->
+
+<header class="navbar">
+
+<div class="nav-left">
+<a href="#features">Features</a>
+<a href="#how">How it works</a>
+</div>
+
+<div class="nav-logo">
+<img src="assets/logo.png" alt="SwiftURL">
+</div>
+
+<div class="nav-right">
+<a href="#pricing">Pricing</a>
+<a href="#about">About</a>
+</div>
+
+</header>
+
+
+<!-- Hero Section -->
+
+<section id="home" class="hero">
+
+<div class="container">
+
+<div class="hero-content">
+
+<h1 class="hero-title">
+Shorten your links <br>
+<span class="gradient-text">instantly</span>
+</h1>
+
+<p class="hero-subtitle">
+Create clean, shareable links in seconds.
+Fast, secure, and built for scale.
+</p>
+
+<!-- URL Tool -->
+
+<div class="tool-card">
+
+<div class="input-wrapper">
+
+<input
+type="url"
+id="urlInput"
+placeholder="Paste your long URL here..."
+class="url-input"
+>
+
+<button id="shortenBtn" class="shorten-button">
+
+<span class="btn-text">Shorten URL</span>
+
+<div class="spinner hidden" id="loadingSpinner"></div>
+
+</button>
+
+</div>
+
+<div id="errorMsg" class="error hidden"></div>
+
+<!-- Result -->
+
+<div id="result" class="result hidden">
+
+<div class="result-input-wrapper">
+
+<input
+type="text"
+id="shortLink"
+class="result-input"
+readonly
+value=""
+>
+
+<button id="copyBtn" class="copy-button">
+
+<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+<path d="M20 2H10c-1.1 0-2 .9-2 2v4H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12h-4v4H4V10h4V6h10v8z"/>
+</svg>
+
+Copy
+
+</button>
+
+</div>
+
+<div id="copyFeedback" class="feedback hidden">
+Copied!
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- Features -->
+
+<section id="features" class="section">
+
+<h2>Features</h2>
+
+<div class="features-grid">
+
+<div class="feature-card">
+<h3>⚡ Fast Redirects</h3>
+<p>
+Our optimized backend ensures lightning-fast redirects using Redis caching.
+</p>
+</div>
+
+<div class="feature-card">
+<h3>📊 Link Analytics</h3>
+<p>
+Track how many people click your shortened links in real time.
+</p>
+</div>
+
+<div class="feature-card">
+<h3>🔒 Secure Links</h3>
+<p>
+Built with modern backend technologies ensuring secure link management.
+</p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- How it Works -->
+
+<section id="how" class="section">
+
+<h2>How it works</h2>
+
+<div class="steps">
+
+<div class="step">
+<span>1</span>
+<p>Paste your long URL into the input box.</p>
+</div>
+
+<div class="step">
+<span>2</span>
+<p>Click the "Shorten URL" button.</p>
+</div>
+
+<div class="step">
+<span>3</span>
+<p>Share the generated short link anywhere.</p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- Pricing -->
+
+<section id="pricing" class="section">
+
+<h2>Pricing</h2>
+
+<div class="pricing-card">
+
+<h3>Free Plan</h3>
+
+<p class="price">$0</p>
+
+<ul>
+<li>Unlimited URL shortening</li>
+<li>Basic analytics</li>
+<li>Fast redirects</li>
+</ul>
+
+<button class="primary-btn">
+Get Started
+</button>
+
+</div>
+
+</section>
+
+
+<!-- About -->
+
+<section id="about" class="section about">
+
+<h2>About SwiftURL</h2>
+
+<p>
+SwiftURL is a fast and minimal URL shortening service built with
+Node.js, Express, MySQL and Redis.
+
+It demonstrates scalable backend architecture with caching,
+rate limiting, and analytics.
+</p>
+
+</section>
+
+
+<!-- Footer -->
+
+<footer class="footer">
+
+<div class="container">
+
+<p>
+© 2024 SwiftURL. Built with Node.js, Express, MySQL & Redis.
+</p>
+
+</div>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: Manasa.1306_
+      DB_NAME: url_shortener
+      REDIS_HOST: redis
+
+  mysql:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Manasa.1306_
+      MYSQL_DATABASE: url_shortener
+    ports:
+      - "3307:3306"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"

@@ -1,0 +1,189 @@
+{
+  "info": {
+    "name": "URL Shortener API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Shorten URL",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status is 201\", function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"Has shortUrl\", function () {",
+              "  const jsonData = pm.response.json();",
+              "  pm.expect(jsonData).to.have.property('shortUrl');",
+              "  pm.collectionVariables.set(\"shortCode\", jsonData.shortCode);",
+              "  pm.collectionVariables.set(\"shortUrl\", jsonData.shortUrl);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://google.com\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/shorten",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "shorten"]
+        }
+      },
+      "response": [
+        {
+          "name": "Success",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com\"\n}",
+            "url": {
+              "raw": "{{baseUrl}}/api/shorten",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "shorten"]
+            }
+          },
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"success\": true,\n  \"id\": 1,\n  \"shortCode\": \"AbC1234\",\n  \"shortUrl\": \"http://localhost:3000/api/AbC1234\",\n  \"originalUrl\": \"https://google.com\"\n}"
+        },
+        {
+          "name": "Validation Error",
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ],
+          "body": "{\n  \"error\": \"URL must start with http:// or https://\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Redirect",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/{{shortCode}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "{{shortCode}}"]
+        }
+      },
+      "response": [
+        {
+          "name": "Redirect",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/{{shortCode}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "{{shortCode}}"]
+            }
+          },
+          "status": "Moved Permanently",
+          "code": 301,
+          "header": [
+            {
+              "key": "Location",
+              "value": "https://google.com"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Get Stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/stats/{{shortCode}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "stats", "{{shortCode}}"]
+        }
+      },
+      "response": [
+        {
+          "name": "Stats",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stats/{{shortCode}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "stats", "{{shortCode}}"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            }
+          ],
+          "body": "{\n  \"shortCode\": \"AbC1234\",\n  \"originalUrl\": \"https://google.com\",\n  \"clicks\": 5,\n  \"createdAt\": \"2024-01-01T00:00:00.000Z\"\n}"
+        },
+        {
+          "name": "Not Found",
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"error\": \"Short URL not found\"\n}"
+        }
+      ]
+    }
+  ]
+}
