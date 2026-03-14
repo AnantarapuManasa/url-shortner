@@ -9,6 +9,8 @@ const { redirectToOriginal } = require("../controllers/urlController");
 
 const app = express();
 
+app.set("trust proxy", 1); // ⭐ IMPORTANT for Render
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -25,17 +27,16 @@ app.use(limiter);
 // API routes
 app.use("/api", urlRoutes);
 
-// Redirect short URL
+// redirect route
 app.get("/:code", redirectToOriginal);
 
-// Serve frontend static files
+// static frontend
 app.use(express.static(path.join(__dirname, "../frontend")));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
-// Start server
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
