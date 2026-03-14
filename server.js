@@ -3,55 +3,56 @@ const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
-
-const urlRoutes = require('./routes/urlRoutes');
-// const statsRoutes = require('./routes/statsRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 const validateUrl = require('./middleware/validateUrl');
+const urlRoutes = require('./routes/urlRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware - FIRST
 app.use(cors());
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+// Rate limiting for shorten
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requests per IP
-  message: { error: 'Too many shorten requests, try again later.' },
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many requests, try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
 });
-
-// Apply rate limit to shorten endpoint
 app.use('/api/shorten', limiter, validateUrl);
-// Health check
-app.get('/health', (req, res) => res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() }));
 
-// API Routes
+// Health check
+app.get('/health', (req, res) => res.json({ status: 'OK', timestamp: new Date().toISOString() }));
+
+// API routes - BEFORE static - CRITICAL
 app.use('/api', urlRoutes);
-// app.use("/api/stats", statsRoutes);
-// 404 handler (after all routes)
+
+// 404 handler
 app.use((req, res, next) => {
   res.status(404).json({ error: `Route ${req.method} ${req.originalUrl} not found` });
 });
 
-// Global error handler (must be last)
+// Error handler - LAST
 app.use(errorHandler);
 
-const server = app.listen(PORT, 'localhost', () => {
-  console.log(`🚀 URL Shortener running on http://localhost:${PORT}`);
-  console.log(`📊 Health: http://localhost:${PORT}/health`);
-  console.log(`📝 Docs: POST /api/shorten { "url": "https://example.com" }`);
+// Serve frontend - AFTER API routes
+app.use(express.static(path.join(__dirname, 'frontend')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/index.html'));
+});
+
+// Deploy-ready listen
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 URL Shortener on http://0.0.0.0:${PORT}`);
+  console.log(`📊 Health: http://0.0.0.0:${PORT}/health`);
+  console.log(`📝 POST /api/shorten {"url": "https://example.com"}`);
 });
 
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
+  console.log('SIGTERM received');
   server.close(() => process.exit(0));
 });
-
-module.exports = server;
-
