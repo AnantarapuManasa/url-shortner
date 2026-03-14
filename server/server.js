@@ -5,6 +5,7 @@ const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 
 const urlRoutes = require("../routes/urlRoutes");
+const { redirectToOriginal } = require("../controllers/urlController");
 
 const app = express();
 
@@ -24,17 +25,14 @@ app.use(limiter);
 // API routes
 app.use("/api", urlRoutes);
 
+// Redirect short URL
+app.get("/:code", redirectToOriginal);
+
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-// Homepage
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
-});
-
-// Redirect short URL
-app.get("/:code", (req, res) => {
-  res.redirect(`/api/${req.params.code}`);
 });
 
 // Start server

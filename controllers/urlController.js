@@ -1,63 +1,42 @@
-const UrlModel = require('../models/Url');
-const cache = require('../services/redisService');
-const { generateShortCode } = require('../utils/generateCode');
+const { nanoid } = require("nanoid");
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+let urlDatabase = {}; // simple in-memory storage
 
-const shorten = async (req, res, next) => {
+// Create short URL
+exports.createShortUrl = async (req, res) => {
   try {
-    const { url: originalUrl } = req.body;
+    const { url } = req.body;
 
-    if (!originalUrl) {
+    if (!url) {
       return res.status(400).json({ error: "URL is required" });
     }
 
-    const shortCode = generateShortCode();
+    const shortCode = nanoid(6);
 
-    await UrlModel.create({
-      originalUrl,
+    urlDatabase[shortCode] = url;
+
+    const shortUrl = `${req.protocol}://${req.get("host")}/${shortCode}`;
+
+    return res.json({
+      shortUrl,
       shortCode
     });
 
-   // await cache.set(shortCode, originalUrl);
-
-    res.status(201).json({
-      shortUrl: `${BASE_URL}/api/${shortCode}`,
-      shortCode
-    });
-
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
-const redirect = async (req, res, next) => {
-  try {
-    const { shortCode } = req.params;
+// Redirect to original URL
+exports.redirectToOriginal = (req, res) => {
+  const { code } = req.params;
 
-    let originalUrl = null; // skip Redis for now
+  const originalUrl = urlDatabase[code];
 
-    if (!originalUrl) {
-      const url = await UrlModel.findByShortCode(shortCode);
-
-      if (!url) {
-        return res.status(404).json({ error: "URL not found" });
-      }
-
-      originalUrl = url.original_url;
-     // await cache.set(shortCode, originalUrl);
-    }
-
-    await UrlModel.incrementClicks(shortCode);
-
-    res.redirect(originalUrl);
-
-  } catch (err) {
-    next(err);
+  if (!originalUrl) {
+    return res.status(404).json({ error: "URL not found" });
   }
-};
 
-module.exports = {
-  shorten,
-  redirect
+  res.redirect(originalUrl);
 };
