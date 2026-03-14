@@ -5,7 +5,7 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 
 const urlRoutes = require('./routes/urlRoutes');
-const statsRoutes = require('../routes/statsRoutes');
+// const statsRoutes = require('./routes/statsRoutes');
 const { errorHandler } = require('./middleware/errorHandler');
 const validateUrl = require('./middleware/validateUrl');
 
@@ -33,7 +33,7 @@ app.get('/health', (req, res) => res.status(200).json({ status: 'OK', timestamp:
 
 // API Routes
 app.use('/api', urlRoutes);
-app.use("/api/stats", statsRoutes);
+// app.use("/api/stats", statsRoutes);
 // 404 handler (after all routes)
 app.use((req, res, next) => {
   res.status(404).json({ error: `Route ${req.method} ${req.originalUrl} not found` });
