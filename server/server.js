@@ -14,31 +14,27 @@ app.use(express.json());
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
+  windowMs: 60 * 1000,
   max: 100,
-  message: {
-    error: "Too many requests. Please try again later."
-  }
+  message: { error: "Too many requests. Please try again later." }
 });
 
 app.use(limiter);
 
-// Serve frontend static files
-app.use(express.static(path.join(__dirname, "../frontend")));
-
 // API routes
 app.use("/api", urlRoutes);
 
-// Redirect short URLs (important for URL shortener)
-app.get("/:code", (req, res, next) => {
-  if (req.params.code === "api") return next();
-  req.url = `/api/${req.params.code}`;
-  next();
-});
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Homepage
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
+});
+
+// Redirect short URL
+app.get("/:code", (req, res) => {
+  res.redirect(`/api/${req.params.code}`);
 });
 
 // Start server
