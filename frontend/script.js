@@ -1,5 +1,5 @@
 
-const API_URL = '/api/shorten';
+const API_URL = 'https://url-shortner-1-sss1.onrender.com/api/shorten';
 
 const elements = {
   urlInput: document.getElementById('urlInput'),
