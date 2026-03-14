@@ -1,5 +1,5 @@
 require('dotenv').config();
-
+const path = require("path");
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
@@ -17,19 +17,21 @@ const limiter = rateLimit({
   windowMs: 60 * 1000,
   max: 100,
   message: {
-error: "Too many requests. Please try again later."
-}
+    error: "Too many requests. Please try again later."
+  }
 });
 
 app.use(limiter);
 
-// Routes
-app.use('/api', urlRoutes);
+// Serve frontend
+app.use(express.static(path.join(__dirname, "../frontend")));
 
-// Health check
-app.get('/', (req, res) => {
-  res.send('URL Shortener API Running');
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
+
+// API routes
+app.use('/api', urlRoutes);
 
 // Start server
 const PORT = process.env.PORT || 3000;
