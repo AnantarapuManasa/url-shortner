@@ -1,5 +1,5 @@
 
-const API_URL = 'http://localhost:3000/api/shorten';
+const API_URL = '/api/shorten';
 
 const elements = {
   urlInput: document.getElementById('urlInput'),
