@@ -9,7 +9,7 @@ const { redirectToOriginal } = require("../controllers/urlController");
 
 const app = express();
 
-app.set("trust proxy", 1); // ⭐ IMPORTANT for Render
+app.set("trust proxy", 1);
 
 // Middleware
 app.use(cors());
@@ -24,15 +24,16 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
+// Serve frontend FIRST
+app.use(express.static(path.join(__dirname, "../frontend")));
+
 // API routes
 app.use("/api", urlRoutes);
 
-// redirect route
+// Redirect short URLs
 app.get("/:code", redirectToOriginal);
 
-// static frontend
-app.use(express.static(path.join(__dirname, "../frontend")));
-
+// Homepage
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
